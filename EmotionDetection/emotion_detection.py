@@ -2,6 +2,16 @@ import requests
 import json
 
 def emotion_detector(text_to_analyse):
+    # Handle blank user input BEFORE calling API
+    if text_to_analyse is None or text_to_analyse.strip() == "":
+        return {
+            "anger": None,
+            "disgust": None,
+            "fear": None,
+            "joy": None,
+            "sadness": None,
+            "dominant_emotion": None
+        }
 
     url = "https://sn-watson-emotion.labs.skills.network/v1/watson.runtime.nlp.v1/NlpService/EmotionPredict"
 
@@ -17,7 +27,18 @@ def emotion_detector(text_to_analyse):
 
     response = requests.post(url, json=payload, headers=headers)
 
-    # Convert response text -> dict
+    # If the server responds with a 400 (bad request), return all None values
+    if response.status_code == 400:
+        return {
+            "anger": None,
+            "disgust": None,
+            "fear": None,
+            "joy": None,
+            "sadness": None,
+            "dominant_emotion": None
+        }
+
+    # Convert response JSON → dict
     result = json.loads(response.text)
 
     # Extract emotions dictionary from Watson response

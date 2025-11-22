@@ -17,14 +17,11 @@ def emotion_detection_route():
     # Read input exactly how the JS sends it
     text_to_analyse = request.args.get("textToAnalyze", "").strip()
 
-    if not text_to_analyse:
-        return "Invalid text! Please try again!"
-
-    # Run the emotion detector
+    # Run the emotion detector (it handles blank and invalid input)
     result = emotion_detector(text_to_analyse)
 
-    # Check for valid result
-    if not result or result.get("dominant_emotion") is None:
+    # Check for valid result based on dominant_emotion
+    if result.get("dominant_emotion") is None:
         return "Invalid text! Please try again!"
 
     # Extract values
